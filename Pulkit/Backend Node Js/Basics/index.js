@@ -1,5 +1,26 @@
 import express from "express";
 import path from "path"
+import mongoose, { mongo } from "mongoose";
+
+
+mongoose.connect("mongodb://127.0.0.1:27017",{
+    dbName: "backend"
+})
+.then(()=>console.log("Database Connected"))
+.catch((e)=>console.log(e))
+
+
+
+const messageSchema = new mongoose.Schema({
+    name: String,
+    email: String
+});
+
+
+const Message = mongoose.model("Message",messageSchema)
+
+
+
 
 const app = express();
 
@@ -17,15 +38,25 @@ app.get("/",(req,res)=>{
     res.render("index", {name: "Pulkit"});
 });
 
+app.get("/add", async (req,res)=>{
+
+    await Message.create({name:"Abhi2",email:"sample2@gmail.com"})
+    res.send("Nice");
+
+
+
+});
+
 app.get("/success",(req,res)=>{
     res.render("success");
 });
 
-app.post("/contact",(req,res)=>{
-    console.log(req.body)
+app.post("/contact",async (req,res)=>{
 
-    users.push({username: req.body.name,email: req.body.email})
+    const {name,email} = req.body;
     
+    await Message.create({name,email});
+
     res.redirect("/success")
 })
 
