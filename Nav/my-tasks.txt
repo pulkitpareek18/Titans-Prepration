@@ -1,2 +1,3 @@
 FOllowing Odin project's javascript course
 Will update on progress soon
+1. Established Github connection
