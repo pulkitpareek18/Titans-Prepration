@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <!-- component -->
+    <div class="flex items-center justify-center p-12">
+        <!-- Author: FormBold Team -->
+        <!-- Learn More: https://formbold.com -->
+        <div class="mx-auto w-full max-w-[550px]">
+            <h1>Logged In as, <b><%= locals.name %></b></h1>
+            <form action="/logout" method="GET">
+                <div>
+                    <button
+                        class="hover:shadow-form rounded-md bg-[#6A64F1] py-3 px-8 text-base font-semibold text-white outline-none">
+                        Logout
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="script.js"></script>
+
+</html>
