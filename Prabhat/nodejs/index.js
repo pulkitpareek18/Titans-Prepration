@@ -1,46 +1,131 @@
-import exp from "constants";
 import express from "express";
 import path from "path";
+import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+
+mongoose.connect("mongodb://127.0.0.1:27017",
+    { dbName: "backend" },)
+    .then(() => console.log("Database Connected"))
+    .catch((e) => console.log(e));
+const userSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    password: String,
+});
+
+const User = mongoose.model("User", userSchema);
 
 const app = express();
 
-const users= [];
-
 //Using middlewares
 app.use(express.static(path.join(path.resolve(), "public")));
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //Setting up view engine
 app.set("view engine", "ejs");
 
-app.get("/", (req, res) =>{
-    //res.send("<h1>Hi</h1>");
-    //res.sendStatus(500);
-
-    res.render("index", {name: "Prabhat"});
-    //res.sendFile("index.html");
+const isAuthenticated = ( async (req, res, next) => {
+    const { token } = req.cookies;
+    if (token) {
+        const decoded= jwt.verify(token, "kalajadu");
+        req.user = await User.findById(decoded._id);
+        next();
+    }
+    else {
+        res.redirect("/login");
+    }
 });
 
-app.post("/", (req, res) =>{
-    //console.log(req.body);
-
-    users.push({username: req.body.name, email: req.body.email});
-    res.render("success");
+app.get("/", isAuthenticated, (req, res) => {
+    console.log(req.user);
+    res.render("logout", {name: req.user.name});
 });
 
-app.get("/users", (req, res) =>{
-    res.json({
-        users,
+app.get("/login", (req, res)=> {
+    res.render("login");
+});
+
+app.get("/register", (req, res) => {
+    res.render("register");
+    //res.redirect("/");
+});
+
+app.post("/login", async (req, res)=>{
+    const {email, password} = req.body;
+    let user = await User.findOne({email});
+    if(!user) return res.redirect("/register");
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if(!isMatch) return res.render("login", {email, message: "Incorrect Password"});
+
+    const token = jwt.sign({_id: user._id}, "kalajadu");
+    res.cookie("token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 60 * 1000),
     });
+    res.redirect("/");
 });
 
-/*app.get("/products", (req, res) =>{
-    res.json({
-        success: true,
-        products: [],
-    });
-});*/
+app.post("/register", async (req, res) => {
 
-app.listen(5000, () =>{
+    const { name, email, password } = req.body;
+
+    let user = await User.findOne({email});
+    if(user){
+        return res.redirect("/login");
+    }
+
+    const hashedpassword = await bcrypt.hash(password,10);
+
+    user = await User.create({
+        name,
+        email,
+        password: hashedpassword,
+    });
+
+    const token = jwt.sign({_id: user._id}, "kalajadu");
+    res.cookie("token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 60 * 1000),
+    });
+    res.redirect("/");
+});
+
+app.post("/login", async (req, res) => {
+
+    const { name, email, password } = req.body;
+
+    let user = await User.findOne({email});
+    if(!user){
+        return res.redirect("/register");
+    }
+
+    user = await User.create({
+        name,
+        email,
+        password,
+    });
+
+    const token = jwt.sign({_id: user._id}, "kalajadu");
+    res.cookie("token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 60 * 1000),
+    });
+    res.redirect("/");
+});
+
+app.get("/logout", (req, res) => {
+    res.cookie("token", null, {
+        httpOnly: true,
+        expires: new Date(Date.now()),
+    });
+    res.redirect("/");
+});
+
+app.listen(5000, () => {
     console.log("Server is working");
 });
