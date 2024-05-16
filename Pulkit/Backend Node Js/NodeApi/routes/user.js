@@ -1,5 +1,6 @@
 import express from 'express';
-import { deleteUser, getAllUsers, getUserDetails, register, specialFunc, updateUser } from '../controllers/user.js';
+import { getAllUsers, register, login, getMyProfile, logout } from '../controllers/user.js';
+import { isAuthenticated } from '../middlewares/auth.js';
 
 
 const router = express.Router();
@@ -9,19 +10,13 @@ router.get("/all", getAllUsers);
 
 router.post("/new", register);
 
-router.get("/userid/special", specialFunc)
+router.post("/login", login);
 
-router
-.route("/userid/:id")
-.get(getUserDetails)
-.put(updateUser)
-.delete(deleteUser);
+router.get("/logout", logout);
 
-// router.get("/userid/:id", getUserDetails)
+router.get("/me",isAuthenticated,getMyProfile);
 
-// router.put("/userid/:id", updateUser)
-
-// router.delete("/userid/:id", deleteUser)
 
 
 export default router;
+
