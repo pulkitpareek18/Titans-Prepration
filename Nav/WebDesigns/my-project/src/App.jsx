@@ -2,9 +2,10 @@ import { useState } from 'react';
 import logo from './Untitled.jpeg';
 
 const Quiz = () => {
-  // Define the state for storing the current question index and whether the answer is correct
+  // Define the state for storing the current question index, whether the answer is correct, and the score
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isCorrect, setIsCorrect] = useState(null);
+  const [score, setScore] = useState(0);
 
   // Define the quiz questions and options
   const questions = [
@@ -18,6 +19,46 @@ const Quiz = () => {
       options: ["Earth", "Mars", "Venus", "Jupiter"],
       answer: "Mars"
     },
+    {
+      question: "Who painted the Mona Lisa?",
+      options: ["Leonardo da Vinci", "Pablo Picasso", "Vincent van Gogh", "Michelangelo"],
+      answer: "Leonardo da Vinci"
+    },
+    {
+      question: "What is the largest mammal in the world?",
+      options: ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
+      answer: "Blue Whale"
+    },
+    {
+      question: "Which country is known as the Land of the Rising Sun?",
+      options: ["China", "Japan", "India", "South Korea"],
+      answer: "Japan"
+    },
+    {
+      question: "Who wrote 'Romeo and Juliet'?",
+      options: ["William Shakespeare", "Jane Austen", "Charles Dickens", "Mark Twain"],
+      answer: "William Shakespeare"
+    },
+    {
+      question: "What is the chemical symbol for water?",
+      options: ["H2O", "CO2", "NaCl", "O2"],
+      answer: "H2O"
+    },
+    {
+      question: "Which gas is most abundant in Earth's atmosphere?",
+      options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Argon"],
+      answer: "Nitrogen"
+    },
+    {
+      question: "Who discovered penicillin?",
+      options: ["Marie Curie", "Louis Pasteur", "Alexander Fleming", "Albert Einstein"],
+      answer: "Alexander Fleming"
+    },
+    {
+      question: "What is the smallest bone in the human body?",
+      options: ["Femur", "Cranium", "Stapes", "Humerus"],
+      answer: "Stapes"
+    },
     // Add more questions here
   ];
 
@@ -27,12 +68,21 @@ const Quiz = () => {
     const isAnswerCorrect = selectedOption === questions[currentQuestion].answer;
     // Update state variable
     setIsCorrect(isAnswerCorrect);
+    // Increment the score if the answer is correct
+    if (isAnswerCorrect) {
+      setScore(score + 1);
+    }
   };
 
   // Function to move to the next question
   const moveToNextQuestion = () => {
-    // Move to the next question
-    setCurrentQuestion(currentQuestion + 1);
+    if (currentQuestion < questions.length - 1) {
+      // Move to the next question
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      // If it was the last question, mark the quiz as completed
+      setCurrentQuestion(currentQuestion + 1);
+    }
     // Reset isCorrect state variable
     setIsCorrect(null);
   };
@@ -76,18 +126,31 @@ const Quiz = () => {
                 </button>
               ))}
             </div>
-            {/* Display next question button if the answer is correct */}
-            {isCorrect && (
-              <button 
-                className="block w-full py-2 px-4 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-900 focus:outline-none focus:bg-blue-600"
-                onClick={moveToNextQuestion}
-              >
-                Next Question
-              </button>
-            )}
+            {/* Display next question button */}
+            <button 
+              className="block w-full py-2 px-4 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-900 focus:outline-none focus:bg-blue-600"
+              onClick={moveToNextQuestion}
+              disabled={isCorrect === null}
+            >
+              Next Question
+            </button>
           </div>
         ) : (
-          <h1 className="text-2xl font-bold">Quiz completed!</h1>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Quiz Finished!</h1>
+            <p className="text-lg mb-5">Congratulations! You have completed the quiz.</p>
+            <p className="text-lg mb-5">Your score is: {score} out of {questions.length}</p>
+            <button 
+              className="block w-full py-2 px-4 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-900 focus:outline-none focus:bg-blue-600"
+              onClick={() => {
+                setCurrentQuestion(0);
+                setIsCorrect(null);
+                setScore(0); // Reset the score
+              }}
+            >
+              Restart Quiz
+            </button>
+          </div>
         )}
       </div>
     </div>
