@@ -1,3 +1,37 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes fillFromLeft {
+    0% {
+      background-position: left;
+    }
+    100% {
+      background-position: right;
+    }
+  }
+  
+  .fill-animation {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)) no-repeat;
+    background-size: 100% 100%;
+    animation: fillFromLeft 1s forwards;
+  }
+
+
+
+  /* Progress bar container */
+.progress-container {
+  width: 100%;
+  background-color: #f3f3f3;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 20px;
+  width: 0%;
+  background-color: #4caf50;
+  transition: width 0.5s ease-in-out;
+}

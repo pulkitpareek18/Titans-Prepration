@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import logo from './Untitled.jpeg';
+import arrowIcon from './arrowIcon.png';
+import backgroundImage from './Bg.png'; // Add your background image import
 
 const Quiz = () => {
   // Define the state for storing the current question index, whether the answer is correct, the score, user responses, and review mode
@@ -107,6 +109,9 @@ const Quiz = () => {
     setReviewMode(!reviewMode);
   };
 
+  // Calculate progress percentage
+  const progressPercentage = ((currentQuestion + 1) / questions.length) * 100;
+
   // Render the current question and options
   return (
     <div>
@@ -122,7 +127,10 @@ const Quiz = () => {
       </nav>
 
       {/* Quiz Content */}
-      <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <div 
+        className="max-w-md mx-auto mt-10 p-6 bg-white bg-cover bg-center rounded-lg shadow-md"
+        style={{ backgroundImage: `url(${backgroundImage})`, backgroundBlendMode: 'overlay' }}
+      >
         {reviewMode ? (
           <div>
             <h1 className="text-2xl font-bold mb-4">Review Your Mistakes</h1>
@@ -145,6 +153,10 @@ const Quiz = () => {
           <div>
             {currentQuestion < questions.length ? (
               <div>
+                {/* Progress Bar */}
+                <div className="progress-container">
+                  <div className="progress-bar" style={{ width: `${progressPercentage}%` }}></div>
+                </div>
                 <h1 className="text-2xl font-bold mb-4">Question {currentQuestion + 1}</h1>
                 <h2 className="text-lg mb-5">{questions[currentQuestion].question}</h2>
                 {/* Display message if the answer is correct */}
@@ -158,7 +170,11 @@ const Quiz = () => {
                   {questions[currentQuestion].options.map((option, index) => (
                     <button 
                       key={index} 
-                      className={`block w-full py-2 px-4 mb-2 rounded-full ${isCorrect && questions[currentQuestion].answer === option ? 'bg-green-500 text-white' : 'bg-blue-500 text-white'} hover:bg-blue-900 focus:outline-none focus:bg-blue-600`}
+                      className={`block w-full py-2 px-4 mb-2 rounded-full
+                        ${isCorrect !== null && option === questions[currentQuestion].answer ? 'bg-green-500 text-white' : ''}
+                        ${isCorrect !== null && option === responses[currentQuestion]?.selectedOption && option !== questions[currentQuestion].answer ? 'bg-red-500 text-white' : ''}
+                        ${isCorrect === null ? 'bg-blue-700 text-white hover:bg-blue-500 focus:outline-none focus:bg-blue-600' : ''}
+                      `}
                       onClick={() => handleOptionSelect(option)}
                       disabled={isCorrect !== null}
                     >
@@ -166,13 +182,14 @@ const Quiz = () => {
                     </button>
                   ))}
                 </div>
-                {/* Display next question button */}
+                {/* Display next question button with arrow icon */}
                 <button 
-                  className="block w-half py-2 px-4 mt-3 ml-32 bg-gray-600 text-white rounded-full hover:bg-gray-800 focus:outline-none focus:bg-blue-600"
+                  className="flex items-center justify-center w-half py-2 px-4 mt-3 ml-32 bg-blue-900 text-white rounded-full hover:bg-gray-800 focus:outline-none focus:bg-blue-600"
                   onClick={moveToNextQuestion}
                   disabled={isCorrect === null}
                 >
                   Next Question
+                  <img src={arrowIcon} alt="Arrow Icon" className="ml-2 w-4 h-4" />
                 </button>
               </div>
             ) : (
