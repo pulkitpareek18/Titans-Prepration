@@ -122,7 +122,7 @@ const Quiz = () => {
       </nav>
 
       {/* Quiz Content */}
-      <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <div className="max-w-md mx-auto mt-10 p-6 bg-gray-100 rounded-lg shadow-md">
         {reviewMode ? (
           <div>
             <h1 className="text-2xl font-bold mb-4">Review Your Mistakes</h1>
@@ -168,7 +168,7 @@ const Quiz = () => {
                 </div>
                 {/* Display next question button */}
                 <button 
-                  className="block w-full py-2 px-4 mt-4 bg-blue-500 text-white rounded-md hover:bg-blue-900 focus:outline-none focus:bg-blue-600"
+                  className="block w-half py-2 px-4 mt-3 ml-32 bg-gray-900 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:bg-blue-600"
                   onClick={moveToNextQuestion}
                   disabled={isCorrect === null}
                 >
